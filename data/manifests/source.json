@@ -1,0 +1,12 @@
+{
+  "react": {
+    "repo": "https://github.com/facebook/react",
+    "ref": "v19.2.6",
+    "commit": "eaf3e95ca92be7a23d3c9cc8ffd6f199a40be401"
+  },
+  "reactDev": {
+    "repo": "https://github.com/reactjs/react.dev",
+    "ref": "main",
+    "commit": "6ec61348646040795fdaa9de14a9bec603260f87"
+  }
+}
