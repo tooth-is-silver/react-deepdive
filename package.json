@@ -1,0 +1,14 @@
+{
+  "name": "react-deepdive",
+  "private": true,
+  "packageManager": "pnpm@11.4.0",
+  "scripts": {
+    "dev": "corepack pnpm --filter @react-deepdive/cli dev",
+    "build": "corepack pnpm -r build",
+    "typecheck": "corepack pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "typescript": "^6.0.3"
+  }
+}

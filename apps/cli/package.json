@@ -1,0 +1,14 @@
+{
+  "name": "@react-deepdive/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "react-dive": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "node src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}
