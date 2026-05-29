@@ -2,9 +2,10 @@
 
 import { printHelp } from "./commands/help.js";
 import { runIndexCommand } from "./commands/index.js";
+import { runSearchCommand } from "./commands/search.js";
 import { printStatus } from "./commands/status.js";
 
-const [, , command] = process.argv;
+const [, , command, ...args] = process.argv;
 
 switch (command) {
   case "status":
@@ -14,7 +15,7 @@ switch (command) {
     runIndexCommand();
     break;
   case "search":
-    console.log(`"${command}" command is not implemented yet.`);
+    runSearchCommand(args);
     break;
   default:
     printHelp();
