@@ -1,4 +1,4 @@
-import { relative } from "node:path";
+import { basename, relative } from "node:path";
 
 import { readSourceIndex, sourceIndexPath, type SourceIndexEntry } from "../indexing/source-index.js";
 import { projectRoot } from "../lib/project-paths.js";
@@ -20,11 +20,58 @@ function countMatches(text: string, query: string) {
   return normalize(text).split(normalize(query)).length - 1;
 }
 
+function stripKnownExtensions(fileName: string) {
+  return fileName.replace(/\.(mdx?|tsx?|jsx?)$/, "");
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function scoreFileName(filePath: string, query: string) {
+  const normalizedQuery = normalize(query);
+  const fileName = normalize(stripKnownExtensions(basename(filePath)));
+
+  if (fileName === normalizedQuery) {
+    return 120;
+  }
+
+  if (fileName.startsWith(normalizedQuery)) {
+    return 25;
+  }
+
+  return countMatches(filePath, query) * 10;
+}
+
+function scoreDefinitions(text: string, query: string) {
+  const escapedQuery = escapeRegExp(query);
+  const definitionPatterns = [
+    new RegExp(`export\\s+function\\s+${escapedQuery}\\b`, "i"),
+    new RegExp(`function\\s+${escapedQuery}\\b`, "i"),
+    new RegExp(`const\\s+${escapedQuery}\\b`, "i"),
+  ];
+
+  if (definitionPatterns[0].test(text)) {
+    return 120;
+  }
+
+  if (definitionPatterns[1].test(text)) {
+    return 90;
+  }
+
+  if (definitionPatterns[2].test(text)) {
+    return 60;
+  }
+
+  return 0;
+}
+
 function scoreEntry(entry: SourceIndexEntry, query: string) {
-  const fileNameScore = countMatches(entry.filePath, query) * 10;
+  const fileNameScore = scoreFileName(entry.filePath, query);
+  const definitionScore = scoreDefinitions(entry.text, query);
   const textScore = countMatches(entry.text, query);
 
-  return fileNameScore + textScore;
+  return fileNameScore + definitionScore + textScore;
 }
 
 function createSnippet(text: string, query: string) {
