@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+
+import { fromProjectRoot } from "../lib/project-paths.js";
 
 type SourceManifest = {
   react: {
@@ -15,8 +15,7 @@ type SourceManifest = {
   };
 };
 
-const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../../..");
-const sourceManifestPath = resolve(projectRoot, "data/manifests/source.json");
+const sourceManifestPath = fromProjectRoot("data/manifests/source.json");
 
 function readSourceManifest(): SourceManifest {
   return JSON.parse(readFileSync(sourceManifestPath, "utf8")) as SourceManifest;

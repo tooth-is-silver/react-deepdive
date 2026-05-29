@@ -3,6 +3,6 @@ export function printHelp() {
   console.log("");
   console.log("Commands:");
   console.log("  status  Show source manifest status");
-  console.log("  index   Build local source index");
+  console.log("  index   Build local docs/source index");
   console.log("  search  Search indexed React docs and source");
 }
