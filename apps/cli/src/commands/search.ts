@@ -6,10 +6,23 @@ import { projectRoot } from "../lib/project-paths.js";
 type SearchResult = {
   entry: SourceIndexEntry;
   score: number;
+  matchedTerm: string;
 };
 
 function normalize(value: string) {
   return value.toLowerCase();
+}
+
+const relatedTermsByQuery = new Map<string, string[]>([
+  ["usestate", ["mountState", "updateState", "dispatchSetState", "basicStateReducer"]],
+  ["useeffect", ["mountEffect", "updateEffect", "mountEffectImpl", "updateEffectImpl", "pushSimpleEffect"]],
+  ["createroot", ["createContainer", "updateContainer", "ReactDOMRoot"]],
+]);
+
+function expandQuery(query: string) {
+  const relatedTerms = relatedTermsByQuery.get(normalize(query)) ?? [];
+
+  return [query, ...relatedTerms];
 }
 
 function countMatches(text: string, query: string) {
@@ -17,7 +30,9 @@ function countMatches(text: string, query: string) {
     return 0;
   }
 
-  return normalize(text).split(normalize(query)).length - 1;
+  const matchPattern = new RegExp(`\\b${escapeRegExp(query)}\\b`, "gi");
+
+  return text.match(matchPattern)?.length ?? 0;
 }
 
 function stripKnownExtensions(fileName: string) {
@@ -46,9 +61,9 @@ function scoreFileName(filePath: string, query: string) {
 function scoreDefinitions(text: string, query: string) {
   const escapedQuery = escapeRegExp(query);
   const definitionPatterns = [
-    new RegExp(`export\\s+function\\s+${escapedQuery}\\b`, "i"),
-    new RegExp(`function\\s+${escapedQuery}\\b`, "i"),
-    new RegExp(`const\\s+${escapedQuery}\\b`, "i"),
+    new RegExp(`export\\s+function\\s+${escapedQuery}\\b`),
+    new RegExp(`function\\s+${escapedQuery}\\b`),
+    new RegExp(`const\\s+${escapedQuery}\\b`),
   ];
 
   if (definitionPatterns[0].test(text)) {
@@ -66,12 +81,39 @@ function scoreDefinitions(text: string, query: string) {
   return 0;
 }
 
-function scoreEntry(entry: SourceIndexEntry, query: string) {
-  const fileNameScore = scoreFileName(entry.filePath, query);
+function scoreEntryForTerm(entry: SourceIndexEntry, query: string, includeFileNameScore: boolean) {
+  const fileNameScore = includeFileNameScore ? scoreFileName(entry.filePath, query) : 0;
   const definitionScore = scoreDefinitions(entry.text, query);
   const textScore = countMatches(entry.text, query);
 
   return fileNameScore + definitionScore + textScore;
+}
+
+function scoreEntry(entry: SourceIndexEntry, queryTerms: string[]) {
+  return queryTerms.reduce(
+    (bestResult, queryTerm, index) => {
+      if (index > 0 && entry.sourceType !== "react-source") {
+        return bestResult;
+      }
+
+      const termScore = scoreEntryForTerm(entry, queryTerm, index === 0);
+      const relatedTermWeight = Math.max(0.45, 0.75 - (index - 1) * 0.05);
+      const weightedScore = index === 0 ? termScore : Math.round(termScore * relatedTermWeight);
+
+      if (weightedScore > bestResult.score) {
+        return {
+          score: weightedScore,
+          matchedTerm: queryTerm,
+        };
+      }
+
+      return bestResult;
+    },
+    {
+      score: 0,
+      matchedTerm: queryTerms[0] ?? "",
+    },
+  );
 }
 
 function createSnippet(text: string, query: string) {
@@ -128,17 +170,26 @@ export function runSearchCommand(args: string[]) {
   }
 
   const index = readSourceIndex();
+  const queryTerms = expandQuery(query);
   const results: SearchResult[] = index.entries
-    .map((entry) => ({
-      entry,
-      score: scoreEntry(entry, query),
-    }))
+    .map((entry) => {
+      const score = scoreEntry(entry, queryTerms);
+
+      return {
+        entry,
+        score: score.score,
+        matchedTerm: score.matchedTerm,
+      };
+    })
     .filter((result) => result.score > 0)
     .sort((a, b) => b.score - a.score);
   const visibleResults = selectVisibleResults(results);
 
   console.log(`Search results for "${query}"`);
   console.log(`- index: ${relative(projectRoot, sourceIndexPath)}`);
+  if (queryTerms.length > 1) {
+    console.log(`- related terms: ${queryTerms.slice(1).join(", ")}`);
+  }
   console.log(`- matches: ${results.length}`);
   console.log(`- shown: ${visibleResults.length}`);
   console.log("");
@@ -153,7 +204,8 @@ export function runSearchCommand(args: string[]) {
 
     console.log(`${index + 1}. ${entry.sourceType} score=${score}`);
     console.log(`   ${entry.filePath}:${entry.startLine}-${entry.endLine}`);
-    console.log(`   ${createSnippet(entry.text, query)}`);
+    console.log(`   matched: ${result.matchedTerm}`);
+    console.log(`   ${createSnippet(entry.text, result.matchedTerm)}`);
     console.log("");
   });
 }
