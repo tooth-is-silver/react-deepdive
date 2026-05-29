@@ -54,10 +54,37 @@ sources/
 
 ## 활용 방향
 
-처음에는 CLI로 시작합니다.
+현재는 CLI로 공식 리소스 상태 확인, 인덱싱, 검색을 할 수 있습니다.
 
 ```bash
 corepack pnpm --filter @react-deepdive/cli dev status
 ```
 
-이후에는 검색, 인덱싱, 질문 답변 명령을 추가해서 공식 문서와 소스 기반으로 React 딥다이브를 진행할 예정입니다.
+### status
+
+현재 학습 기준이 되는 React 소스와 공식 문서의 repo, ref, commit을 확인합니다.
+
+```bash
+corepack pnpm --filter @react-deepdive/cli dev status
+```
+
+### index
+
+`sources/`에 받아둔 React 소스와 공식 문서를 읽어서 검색용 인덱스를 생성합니다.
+
+```bash
+corepack pnpm --filter @react-deepdive/cli dev index
+```
+
+생성 결과는 `data/indexes/source-index.json`에 저장됩니다. 이 파일은 로컬 캐시라서 레포지토리에 올리지 않습니다.
+
+### search
+
+생성된 인덱스에서 키워드를 검색합니다. 결과는 공식 문서와 React 소스를 함께 보여줍니다.
+
+```bash
+corepack pnpm --filter @react-deepdive/cli dev search useState
+corepack pnpm --filter @react-deepdive/cli dev search mountState
+```
+
+이후에는 검색 결과를 근거로 자연어 답변을 생성하는 `ask` 명령을 추가할 예정입니다.
