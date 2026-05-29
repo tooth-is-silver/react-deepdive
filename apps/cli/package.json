@@ -7,7 +7,7 @@
     "react-dive": "./dist/index.js"
   },
   "scripts": {
-    "dev": "node src/index.ts",
+    "dev": "tsc -p tsconfig.json && node dist/index.js",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   }
