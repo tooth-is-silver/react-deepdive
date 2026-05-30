@@ -87,4 +87,14 @@ corepack pnpm --filter @react-deepdive/cli dev search useState
 corepack pnpm --filter @react-deepdive/cli dev search mountState
 ```
 
+일부 대표 키워드는 관련 내부 심볼도 함께 검색합니다.
+
+```txt
+useState   -> mountState, updateState, dispatchSetState, basicStateReducer
+useEffect  -> mountEffect, updateEffect, mountEffectImpl, updateEffectImpl, pushSimpleEffect
+createRoot -> createContainer, updateContainer, ReactDOMRoot
+```
+
+검색 결과의 `matched` 값은 실제로 어떤 키워드나 관련 심볼에 매칭됐는지 보여줍니다.
+
 이후에는 검색 결과를 근거로 자연어 답변을 생성하는 `ask` 명령을 추가할 예정입니다.
