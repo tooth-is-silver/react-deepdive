@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { runAskCommand } from "./commands/ask.js";
 import { printHelp } from "./commands/help.js";
 import { runIndexCommand } from "./commands/index.js";
 import { runSearchCommand } from "./commands/search.js";
@@ -16,6 +17,9 @@ switch (command) {
     break;
   case "search":
     runSearchCommand(args);
+    break;
+  case "ask":
+    runAskCommand(args);
     break;
   default:
     printHelp();

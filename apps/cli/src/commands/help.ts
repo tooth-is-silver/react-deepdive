@@ -5,4 +5,5 @@ export function printHelp() {
   console.log("  status  Show source manifest status");
   console.log("  index   Build local docs/source index");
   console.log("  search  Search indexed React docs and source");
+  console.log("  ask     Build an evidence-backed answer draft");
 }

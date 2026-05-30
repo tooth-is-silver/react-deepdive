@@ -97,4 +97,13 @@ createRoot -> createContainer, updateContainer, ReactDOMRoot
 
 검색 결과의 `matched` 값은 실제로 어떤 키워드나 관련 심볼에 매칭됐는지 보여줍니다.
 
-이후에는 검색 결과를 근거로 자연어 답변을 생성하는 `ask` 명령을 추가할 예정입니다.
+### ask
+
+질문에서 React API나 내부 심볼을 감지하고, 검색 결과를 근거로 답변 작성용 초안을 만듭니다.
+
+```bash
+corepack pnpm --filter @react-deepdive/cli dev ask "useState는 내부적으로 어떻게 동작해?"
+corepack pnpm --filter @react-deepdive/cli dev ask "createRoot flow"
+```
+
+현재 `ask`는 AI API를 호출하지 않습니다. 공식 문서/소스 근거, 읽을 순서, 답변 작성 방향을 출력하는 로컬 근거 묶음 생성 명령입니다.
