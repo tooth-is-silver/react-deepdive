@@ -81,8 +81,59 @@ function printReadingStep(step: ReadingStep, index: number) {
   console.log(`   matched: ${step.result.matchedTerm}`);
 }
 
+function findReadingStep(steps: ReadingStep[], label: string) {
+  return steps.find((step) => step.label === label);
+}
+
+function formatCitation(step: ReadingStep | undefined) {
+  if (!step) {
+    return "no evidence found";
+  }
+
+  const { entry } = step.result;
+
+  return `${entry.filePath}:${entry.startLine}-${entry.endLine}`;
+}
+
+function printInterviewAnswerTemplate(searchQuery: string, readingSteps: ReadingStep[]) {
+  const officialDocs = findReadingStep(readingSteps, "Official docs");
+  const publicApiEntry = findReadingStep(readingSteps, "Public API entry");
+  const internalImplementation = findReadingStep(readingSteps, "Internal implementation");
+
+  console.log("");
+  console.log("Interview answer template:");
+  console.log("");
+  console.log("1. Short answer");
+  console.log(
+    `   ${searchQuery}는 공식 문서 기준으로 먼저 public API 역할을 설명하고, 그 다음 소스 기준 내부 위임 흐름을 설명합니다.`,
+  );
+  console.log(`   Evidence: ${formatCitation(officialDocs)}`);
+  console.log("");
+  console.log("2. Public API behavior");
+  console.log("   - 사용자 관점에서 이 API가 무엇을 해결하는지 설명합니다.");
+  console.log("   - 공식 문서의 표현을 우선 기준으로 삼습니다.");
+  console.log(`   Evidence: ${formatCitation(officialDocs)}`);
+  console.log("");
+  console.log("3. Source flow");
+  console.log("   - public API entry에서 시작합니다.");
+  console.log(`   - Entry evidence: ${formatCitation(publicApiEntry)}`);
+  console.log("   - 내부 구현 지점으로 이어지는 흐름을 설명합니다.");
+  console.log(`   - Internal evidence: ${formatCitation(internalImplementation)}`);
+  console.log("");
+  console.log("4. Interview wording");
+  console.log(
+    `   "${searchQuery}는 public API에서는 사용자-facing 동작을 제공하고, 소스에서는 public entry에서 내부 구현 지점으로 이어집니다. 답변할 때는 먼저 공식 문서 기준의 역할을 말한 뒤, 소스에서 확인되는 entry와 내부 구현 위치를 근거로 흐름을 설명하겠습니다."`,
+  );
+  console.log("");
+  console.log("5. Boundary");
+  console.log("   - 공식 문서 내용은 public contract로 말합니다.");
+  console.log("   - 소스 흐름 설명은 현재 로컬 React 소스 버전 기준이라고 밝힙니다.");
+  console.log("   - 근거에 없는 세부 동작은 추론이라고 분리합니다.");
+}
+
 function printAnswerDraft(question: string, searchQuery: string, evidence: SearchResult[]) {
   const { docs, sources } = splitEvidence(evidence);
+  const readingSteps = createReadingSteps(searchQuery, docs, sources);
 
   console.log("Answer draft");
   console.log("");
@@ -92,14 +143,8 @@ function printAnswerDraft(question: string, searchQuery: string, evidence: Searc
   console.log("");
   console.log("What to read first:");
 
-  createReadingSteps(searchQuery, docs, sources).forEach(printReadingStep);
-
-  console.log("");
-  console.log("Grounded response shape:");
-  console.log("- Start from the official docs result to define the public API behavior.");
-  console.log("- Use the React source results to explain where the public API delegates internally.");
-  console.log("- Separate direct source facts from interpretation.");
-  console.log("- Mention the local React source version from `react-dive status` when writing the final answer.");
+  readingSteps.forEach(printReadingStep);
+  printInterviewAnswerTemplate(searchQuery, readingSteps);
 }
 
 export function runAskCommand(args: string[]) {
