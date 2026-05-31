@@ -3,16 +3,41 @@ import { createSnippet, detectSearchQuery, searchSourceIndex, type SearchResult 
 function formatEvidence(result: SearchResult, index: number) {
   const { entry } = result;
 
-  console.log(`${index + 1}. ${entry.sourceType}`);
-  console.log(`   ${entry.filePath}:${entry.startLine}-${entry.endLine}`);
+  console.log(`${index + 1}. ${entry.filePath}:${entry.startLine}-${entry.endLine}`);
   console.log(`   matched: ${result.matchedTerm}`);
   console.log(`   ${createSnippet(entry.text, result.matchedTerm)}`);
   console.log("");
 }
 
+function splitEvidence(evidence: SearchResult[]) {
+  return {
+    docs: evidence.filter((result) => result.entry.sourceType === "react-docs"),
+    sources: evidence.filter((result) => result.entry.sourceType === "react-source"),
+  };
+}
+
+function printEvidenceSection(title: string, evidence: SearchResult[]) {
+  console.log(title);
+  console.log("");
+
+  if (evidence.length === 0) {
+    console.log("- No evidence found.");
+    console.log("");
+    return;
+  }
+
+  evidence.forEach(formatEvidence);
+}
+
+function printCompactEvidence(result: SearchResult, index: number) {
+  const { entry } = result;
+
+  console.log(`${index + 1}. ${entry.filePath}:${entry.startLine}-${entry.endLine}`);
+  console.log(`   matched: ${result.matchedTerm}`);
+}
+
 function printAnswerDraft(question: string, searchQuery: string, evidence: SearchResult[]) {
-  const docs = evidence.filter((result) => result.entry.sourceType === "react-docs");
-  const sources = evidence.filter((result) => result.entry.sourceType === "react-source");
+  const { docs, sources } = splitEvidence(evidence);
 
   console.log("Answer draft");
   console.log("");
@@ -22,11 +47,7 @@ function printAnswerDraft(question: string, searchQuery: string, evidence: Searc
   console.log("");
   console.log("What to read first:");
 
-  [...docs.slice(0, 2), ...sources.slice(0, 3)].forEach((result, index) => {
-    const { entry } = result;
-
-    console.log(`${index + 1}. ${entry.filePath}:${entry.startLine}-${entry.endLine}`);
-  });
+  [...docs.slice(0, 2), ...sources.slice(0, 3)].forEach(printCompactEvidence);
 
   console.log("");
   console.log("Grounded response shape:");
@@ -59,9 +80,10 @@ export function runAskCommand(args: string[]) {
     return;
   }
 
-  console.log("Evidence");
-  console.log("");
-  visibleResults.forEach(formatEvidence);
+  const { docs, sources } = splitEvidence(visibleResults);
+
+  printEvidenceSection("Docs evidence", docs);
+  printEvidenceSection("Source evidence", sources);
 
   printAnswerDraft(question, searchQuery, visibleResults);
 }
