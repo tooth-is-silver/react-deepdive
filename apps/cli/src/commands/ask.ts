@@ -29,11 +29,56 @@ function printEvidenceSection(title: string, evidence: SearchResult[]) {
   evidence.forEach(formatEvidence);
 }
 
-function printCompactEvidence(result: SearchResult, index: number) {
-  const { entry } = result;
+type ReadingStep = {
+  label: string;
+  result: SearchResult;
+};
 
-  console.log(`${index + 1}. ${entry.filePath}:${entry.startLine}-${entry.endLine}`);
-  console.log(`   matched: ${result.matchedTerm}`);
+function isSameEvidence(left: SearchResult, right: SearchResult) {
+  return (
+    left.entry.filePath === right.entry.filePath &&
+    left.entry.startLine === right.entry.startLine &&
+    left.entry.endLine === right.entry.endLine
+  );
+}
+
+function addReadingStep(steps: ReadingStep[], label: string, result: SearchResult | undefined) {
+  if (!result || steps.some((step) => isSameEvidence(step.result, result))) {
+    return;
+  }
+
+  steps.push({ label, result });
+}
+
+function createReadingSteps(searchQuery: string, docs: SearchResult[], sources: SearchResult[]) {
+  const steps: ReadingStep[] = [];
+  const normalizedSearchQuery = searchQuery.toLowerCase();
+  const publicApiSource = sources.find(
+    (result) => result.matchedTerm.toLowerCase() === normalizedSearchQuery,
+  );
+  const internalSource = sources.find(
+    (result) => result.matchedTerm.toLowerCase() !== normalizedSearchQuery,
+  );
+
+  addReadingStep(steps, "Official docs", docs[0]);
+  addReadingStep(steps, "Public API entry", publicApiSource ?? sources[0]);
+  addReadingStep(steps, "Internal implementation", internalSource);
+  addReadingStep(steps, "Supporting docs", docs[1]);
+  addReadingStep(
+    steps,
+    "Supporting source",
+    sources.find((source) => !steps.some((step) => isSameEvidence(step.result, source))),
+  );
+
+  return steps;
+}
+
+function printReadingStep(step: ReadingStep, index: number) {
+  const { entry } = step.result;
+
+  console.log(`${index + 1}. ${step.label}`);
+  console.log(`   ${entry.filePath}:${entry.startLine}-${entry.endLine}`);
+  console.log(`   matched: ${step.result.matchedTerm}`);
 }
 
 function printAnswerDraft(question: string, searchQuery: string, evidence: SearchResult[]) {
@@ -47,7 +92,7 @@ function printAnswerDraft(question: string, searchQuery: string, evidence: Searc
   console.log("");
   console.log("What to read first:");
 
-  [...docs.slice(0, 2), ...sources.slice(0, 3)].forEach(printCompactEvidence);
+  createReadingSteps(searchQuery, docs, sources).forEach(printReadingStep);
 
   console.log("");
   console.log("Grounded response shape:");
