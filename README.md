@@ -107,3 +107,20 @@ corepack pnpm --filter @react-deepdive/cli dev ask "createRoot flow"
 ```
 
 현재 `ask`는 AI API를 호출하지 않습니다. 공식 문서/소스 근거, 읽을 순서, 답변 작성 방향을 출력하는 로컬 근거 묶음 생성 명령입니다.
+
+`ask` 출력은 다음 흐름으로 구성됩니다.
+
+```txt
+Docs evidence
+Source evidence
+What to read first
+Evidence boundary
+Interview answer template
+```
+
+`Evidence boundary`는 답변에서 직접 말해도 되는 근거와 조심해서 해석해야 하는 부분을 나눕니다.
+
+- `Direct evidence`: 공식 문서나 소스 chunk에서 직접 확인되는 내용입니다.
+- `Needs inference`: 여러 근거를 연결해서 설명해야 하는 내용입니다.
+
+예를 들어 `useState`의 public API 설명, `ReactHooks.js`의 public entry, `ReactFiberHooks.js`의 내부 구현 지점은 직접 근거로 볼 수 있습니다. 반면 public entry에서 내부 구현으로 이어지는 전체 흐름, mount/update 구분, queue 처리, render/commit phase 연결은 여러 소스 근거를 이어서 설명해야 하므로 추론이 필요한 영역으로 다룹니다.
