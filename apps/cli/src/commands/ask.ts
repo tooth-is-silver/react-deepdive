@@ -95,6 +95,35 @@ function formatCitation(step: ReadingStep | undefined) {
   return `${entry.filePath}:${entry.startLine}-${entry.endLine}`;
 }
 
+function printEvidenceBoundary(searchQuery: string, readingSteps: ReadingStep[]) {
+  const officialDocs = findReadingStep(readingSteps, "Official docs");
+  const publicApiEntry = findReadingStep(readingSteps, "Public API entry");
+  const internalImplementation = findReadingStep(readingSteps, "Internal implementation");
+
+  console.log("");
+  console.log("Evidence boundary:");
+  console.log("");
+  console.log("Direct evidence");
+  console.log(
+    `1. 공식 문서에서 ${searchQuery}의 public API 설명을 확인합니다. Evidence: ${formatCitation(officialDocs)}`,
+  );
+  console.log(
+    `2. 소스에서 ${searchQuery}의 public entry를 확인합니다. Evidence: ${formatCitation(publicApiEntry)}`,
+  );
+  console.log(
+    `3. 소스에서 관련 내부 구현 지점을 확인합니다. Evidence: ${formatCitation(internalImplementation)}`,
+  );
+  console.log("");
+  console.log("Needs inference");
+  console.log(
+    "1. public entry에서 내부 구현 지점으로 이어지는 전체 호출 흐름은 여러 근거를 연결해 설명해야 합니다.",
+  );
+  console.log(
+    "2. Hook의 mount/update, root/container 생성, queue 처리, render/commit phase 연결처럼 근거가 여러 파일에 흩어진 내용은 단정하지 말고 소스 흐름상 해석으로 말합니다.",
+  );
+  console.log("3. 현재 evidence에 없는 세부 동작은 답변에 포함하지 않거나 추가 검색 후 말합니다.");
+}
+
 function printInterviewAnswerTemplate(searchQuery: string, readingSteps: ReadingStep[]) {
   const officialDocs = findReadingStep(readingSteps, "Official docs");
   const publicApiEntry = findReadingStep(readingSteps, "Public API entry");
@@ -144,6 +173,7 @@ function printAnswerDraft(question: string, searchQuery: string, evidence: Searc
   console.log("What to read first:");
 
   readingSteps.forEach(printReadingStep);
+  printEvidenceBoundary(searchQuery, readingSteps);
   printInterviewAnswerTemplate(searchQuery, readingSteps);
 }
 
