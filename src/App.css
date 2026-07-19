@@ -1,0 +1,269 @@
+.app {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.app__header {
+  text-align: center;
+}
+
+.app__title {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.app__subtitle {
+  margin: 0.4rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* 카테고리 필터 */
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.category-filter__chip {
+  min-height: 44px;
+  padding: 0 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+.category-filter__chip[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+/* 세션 진행률 */
+.session-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.session-progress__bar {
+  flex: 1;
+  height: 10px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.session-progress__fill {
+  height: 100%;
+  background: var(--known);
+  transition: width 0.3s ease;
+}
+
+.session-progress__label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* 카드 무대 */
+.app__stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.flashcard {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 6%);
+}
+
+.flashcard--front {
+  min-height: 15rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  color: var(--text);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.flashcard--front:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 10%);
+}
+
+.flashcard__category {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.flashcard__keyword {
+  font-size: 2rem;
+  font-weight: 700;
+  padding: 0 1rem;
+}
+
+.flashcard__hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.flashcard--back {
+  min-height: 15rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.flashcard__back-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.flashcard__keyword-small {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.flashcard__core {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.flashcard__detail > summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+/* 채점 버튼 */
+.grade-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.grade-buttons__button {
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.grade-buttons__button--unknown {
+  border-color: var(--unknown);
+  color: var(--unknown);
+}
+
+.grade-buttons__button--vague {
+  border-color: var(--vague);
+  color: var(--vague);
+}
+
+.grade-buttons__button--known {
+  border-color: var(--known);
+  color: var(--known);
+}
+
+.grade-buttons__shortcut {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* 완료 상태 */
+.app__done {
+  text-align: center;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.app__done-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.app__restart {
+  min-height: 48px;
+  padding: 0 1.5rem;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+/* 더보기 마크다운 */
+.markdown {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.markdown h3 {
+  font-size: 1rem;
+  margin: 1.2rem 0 0.5rem;
+  color: var(--text-muted);
+}
+
+.markdown pre {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.9rem;
+  overflow-x: auto;
+}
+
+.markdown code {
+  font-family: 'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+.markdown :not(pre) > code {
+  background: var(--surface-2);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
