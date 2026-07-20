@@ -55,8 +55,7 @@ const age = getValue(user, 'age');
 - generic
 - keyof
 - K extends keyof T
-- T[K]
-- indexed access type
+- T[K] (indexed access type)
 
 ## 자주 틀리는 표현
 
