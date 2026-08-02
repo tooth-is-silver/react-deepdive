@@ -13,6 +13,8 @@ const outputPath = join(projectRoot, 'src', 'data', 'cards.json');
 const detailSections = [
   ['질문', '질문'],
   ['최적 답변', '최적 답변'],
+  ['대표 도구/라이브러리', '대표 도구/라이브러리'],
+  ['예시 코드', '예시 코드'],
   ['개선 코드', '개선 코드'],
   ['자주 틀리는 표현', '자주 틀리는 표현'],
 ];
