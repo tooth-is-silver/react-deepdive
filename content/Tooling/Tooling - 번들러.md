@@ -23,6 +23,25 @@ tags:
 
 프로덕션 빌드에서는 사용하지 않는 코드를 제거하는 tree shaking, 파일 크기를 줄이는 minification, 필요한 시점에 나눠 받는 code splitting, 디버깅을 돕는 source map 생성 같은 최적화도 함께 수행합니다. 정리하면 번들러는 흩어진 소스 코드를 배포 가능한 실행 단위로 만들고, 네트워크와 실행 성능을 고려해 최적화하는 도구입니다.
 
+## 예시 코드
+
+```ts
+// main.ts
+import { formatPrice } from './format';
+import './style.css';
+
+console.log(formatPrice(10000));
+```
+
+```ts
+// format.ts
+export function formatPrice(price: number) {
+  return `${price.toLocaleString()}원`;
+}
+```
+
+번들러는 `main.ts`를 entry point로 보고, `format.ts`와 `style.css`까지 이어지는 import 관계를 따라 모듈 그래프를 만듭니다. 이후 브라우저가 내려받을 수 있는 자바스크립트와 CSS 파일로 묶습니다.
+
 ## 반드시 포함할 키워드
 
 - 번들러

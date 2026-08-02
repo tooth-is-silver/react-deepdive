@@ -23,6 +23,23 @@ tags:
 
 도구가 코드를 단순 문자열로 다루면 안전하게 분석하거나 바꾸기 어렵습니다. AST를 사용하면 ESLint는 특정 문법 패턴을 검사할 수 있고, Babel·SWC·esbuild 같은 도구는 코드를 다른 문법으로 변환할 수 있습니다. 일반적인 흐름은 `parse → analyze/transform → generate`입니다. 정리하면 파서는 코드를 도구가 이해할 수 있는 AST로 바꾸고, AST는 린트·트랜스파일·코드 변환의 공통 기반이 됩니다.
 
+## 예시 코드
+
+```js
+const count = 1;
+```
+
+위 코드는 파서를 거치면 대략 이런 구조로 이해됩니다.
+
+```text
+VariableDeclaration
+  VariableDeclarator
+    Identifier(count)
+    Literal(1)
+```
+
+ESLint는 이런 AST를 순회하면서 `count`가 사용됐는지 검사할 수 있고, Babel은 같은 AST를 바탕으로 문법을 다른 형태로 바꿀 수 있습니다.
+
 ## 반드시 포함할 키워드
 
 - 파서
