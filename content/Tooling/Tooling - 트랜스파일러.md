@@ -23,6 +23,14 @@ tags:
 
 번들러가 여러 모듈을 따라가 배포용 파일 묶음을 만드는 도구라면, 트랜스파일러는 개별 코드의 문법을 변환하는 도구에 가깝습니다. 실제 빌드 도구에서는 두 역할이 함께 엮이는 경우가 많지만, 면접에서는 “번들러는 모듈을 묶고 최적화한다, 트랜스파일러는 문법을 변환한다”로 구분하면 됩니다. 정리하면 트랜스파일러는 코드의 실행 의미를 유지하면서 실행 환경이 이해할 수 있는 문법으로 바꾸는 도구입니다.
 
+## 대표 도구/라이브러리
+
+- Babel: 플러그인 생태계가 크고, 최신 JavaScript와 JSX 변환에 오래 쓰여 온 도구입니다.
+- SWC: Rust 기반으로 빠른 JavaScript, TypeScript, JSX 변환을 제공합니다.
+- esbuild: Go 기반으로 매우 빠른 변환과 번들링을 제공합니다.
+- TypeScript compiler(tsc): TypeScript 타입 검사와 JavaScript 출력에 사용합니다.
+- Sucrase: 개발 환경에서 빠른 TypeScript, JSX 변환을 목표로 하는 도구입니다.
+
 ## 예시 코드
 
 ```tsx
@@ -42,7 +50,7 @@ const element = jsx('h1', { children: title });
 ## 반드시 포함할 키워드
 
 - 트랜스파일러
-- Babel/SWC/esbuild
+- Babel/SWC/esbuild/tsc
 - TypeScript 변환
 - JSX 변환
 - 최신 문법 변환
